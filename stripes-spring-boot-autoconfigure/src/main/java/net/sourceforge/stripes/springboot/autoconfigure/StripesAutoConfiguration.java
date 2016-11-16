@@ -75,7 +75,7 @@ public class StripesAutoConfiguration {
         putIfNotEmpty( params, "Configuration.Class", properties.getConfiguration() );
         putIfNotEmpty( params, "CoreInterceptor.Classes", properties.getCoreInterceptorClasses() );
         putIfNotEmpty( params, "DelegatingExceptionHandler.Packages", properties.getDelegatingExceptionHandlerPackages() );
-        defaultIfEmpty( params, "ExceptionHandler.Class", properties.getExceptionHandler(), getExceptionHandler() );
+        putIfNotEmpty( params, "ExceptionHandler.Class", properties.getExceptionHandler() );
         defaultIfEmpty( params, "Extension.Packages", properties.getExtensionPackages(), "net.sourceforge.stripes.integration.spring" );
         putIfNotEmpty( params, "FormatterFactory.Class", properties.getFormatterFactory() );
         putIfNotEmpty( params, "Interceptor.Classes", properties.getInterceptors() );
@@ -142,24 +142,6 @@ public class StripesAutoConfiguration {
         LOG.info( "Detected ActionBeans on " + packages );
 
         return packages;
-    }
-
-    String getExceptionHandler() {
-        final StripesClassesScanner< ExceptionHandler > scanner = new StripesClassesScanner< ExceptionHandler >();
-        scanner.addIncludeFilter( new AssignableTypeFilter( ExceptionHandler.class ) );
-        final Collection< Class< ? extends ExceptionHandler > > exceptionHandlers = scanner.findComponentClasses( BASE_PKG );
-        String exceptionHandler = scanner.selectFirstConcreteConfigurationClass( exceptionHandlers );
-        if( StringUtils.isEmpty( exceptionHandler ) ) {
-            exceptionHandler = "net.sourceforge.stripes.exception.DefaultExceptionHandler";
-            LOG.debug( "Setting ExceptionHandler to net.sourceforge.stripes.exception.DefaultExceptionHandler, as " +
-                       "wasn't able to find classes implementing ExceptionHandler, check your application build and " +
-                       "optionally your stripes.exception-handler property on application.properties" );
-        }
-
-        LOG.info( "Detected ExceptionHandlers on " + scanner.toPackagesWithoutStripesClasses( exceptionHandlers ) +
-                  "; selected " + exceptionHandler );
-
-        return exceptionHandler;
     }
 
     void defaultIfEmpty( final Map< String, String > params, final String key, final String value, final String def ) {

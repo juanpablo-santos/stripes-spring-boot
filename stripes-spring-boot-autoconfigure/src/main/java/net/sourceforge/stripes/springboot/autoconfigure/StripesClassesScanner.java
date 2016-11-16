@@ -44,15 +44,6 @@ class StripesClassesScanner < T > extends ClassPathScanningCandidateComponentPro
         return classes;
     }
 
-    String selectFirstConcreteConfigurationClass( final Collection< Class< ? extends T > > classes ) {
-        for( final Class< ? extends T > clase : classes ) {
-            if( !fromStripesLibrary( clase ) && !Modifier.isAbstract( clase.getModifiers() ) && !clase.isInterface() ) {
-                return clase.getName();
-            }
-        }
-        return null;
-    }
-
     String toPackagesWithoutStripesClasses( final Collection< Class< ? extends T > > classes ) {
         final Set< String > packages = new HashSet< String >();
         for( final Class< ? extends T > clase : classes ) {
