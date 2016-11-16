@@ -84,7 +84,7 @@ public class StripesAutoConfiguration {
         putIfNotEmpty( params, "LocalizationBundleFactory.Class", properties.getLocalizationBundleFactory() );
         putIfNotEmpty( params, "LocalizationBundleFactory.ErrorMessageBundle", properties.getErrorMessageBundle() );
         putIfNotEmpty( params, "LocalizationBundleFactory.FieldNameBundle", properties.getFieldNameBundle() );
-        defaultIfEmpty( params, "MultipartWrapper.Class", properties.getMultipartWrapper(), "net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper" );
+        putIfNotEmpty( params, "MultipartWrapper.Class", properties.getMultipartWrapper() );
         putIfNotEmpty( params, "MultipartWrapperFactory.Class", properties.getMultipartWrapperFactory() );
         putIfNotEmpty( params, "FileUpload.MaximumPostSize", properties.getFileUploadMaximumPostSize() );
         putIfNotEmpty( params, "PopulationStrategy.Class", properties.getPopulationStrategy() );
