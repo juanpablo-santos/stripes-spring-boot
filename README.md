@@ -8,11 +8,11 @@
 
 ## Configuration
 
-This extension also enables support for `stripes.*` namespace on the `application.properties` file, through the `StripesProperties` class. Although it is possible to start your Stripes application without having to set any custom properties, most probably you would like to look at:
-* `stripes.action-resolver-packages`: if not set, Spring Boot will look for actionbean packages on the whole classpath.
-* `stripes.exception-handler`: if not set, Spring Boot will look for the first implementation of `ExceptionHandler` (besides `net.sourceforge.stripes.exception.DefaultExceptionHandler`) on the whole classpath and will use that. If there aren't found any ExceptionHandlers, `net.sourceforge.stripes.exception.DefaultExceptionHandler` will be used.
-* `stripes.interceptors`: if you would like to define any.
-* `stripes.custom-conf.WHATEVER`: any other filter configuration value that you might need for your Stripes extension are supported through the `stripes.custom-conf` sub-namespace.
+This extension also enables support for `stripes.*` namespace on the `application.properties` file, through the `net.sourceforge.stripes.springboot.autoconfigure.StripesProperties` class. Although it is possible to start your Stripes application without having to set any custom properties, most probably you would like to look at:
+* `stripes.action-resolver-packages`: if not set, Spring Boot will look for actionbean packages by scanning the whole classpath. This operation "just works", but it slows down the application's startup time.
+* `stripes.extension.packages`: defaults to `net.sourceforge.stripes.integration.spring` (as we are already using Spring / Spring Boot, it seems a reasonable default), change if needed.
+* `stripes.encryption-key`: if you would like to use an encryption key which survives application reloads.
+* `stripes.custom-conf.WHATEVER`: any other filter configuration value that you might need for your Stripes extension are supported through the `stripes.custom-conf` sub-namespace, i.e., `stripes.custom-conf.WHATEVER=MY_CUSTOM_VALUE` will be set as an configuration parameter of Stripes filter with key `WHATEVER` and value `MY_CUSTOM_VALUE`.
 * `stripes.enabled`: set to false to bypass this module's configuration.
 
 ## Running the sample
@@ -25,5 +25,4 @@ This extension also enables support for `stripes.*` namespace on the `applicatio
 ## Other caveats
 
 * this starter module manually deactivates Spring MVC, by defining String-type beans with ids `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME`, `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME` and `conventionErrorViewResolver`.
-* if it is not set, the `Extension.Packages` (`stripes.extension.packages`) is set to `net.sourceforge.stripes.integration.spring`. We're already using Spring Boot so it kinda makes sense to have Spring support activated on the Stripes application.
-* to enforce same encryption key if running several application instances set the `stripes.encryption-key` property at build time. Look at the sample (pom.xml, application.properties) to see how to do this.
+* if running several application instances, set the `stripes.encryption-key` property at build time to enforce the use of the same encryption key. Look at the sample (`stripes-spring-boot-sample/pom.xml`, `stripes-spring-boot-sample/src/main/resources/application.properties`) to see how to do this.
