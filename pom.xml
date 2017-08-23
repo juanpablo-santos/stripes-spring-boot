@@ -6,7 +6,7 @@
   <parent>
     <artifactId>stripes-parent</artifactId>
     <groupId>net.sourceforge.stripes</groupId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0-beta4</version>
   </parent>
 
   <artifactId>stripes-spring-boot-builder</artifactId>
