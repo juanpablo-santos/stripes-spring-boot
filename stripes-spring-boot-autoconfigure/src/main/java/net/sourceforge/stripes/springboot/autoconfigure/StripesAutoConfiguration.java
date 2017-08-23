@@ -26,7 +26,6 @@ import org.springframework.util.StringUtils;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.controller.DynamicMappingFilter;
 import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.exception.ExceptionHandler;
 import net.sourceforge.stripes.util.Log;
 
 
