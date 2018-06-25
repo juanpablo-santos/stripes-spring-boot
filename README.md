@@ -17,6 +17,10 @@ Although it is possible to start your Stripes application without having to set 
 * `stripes.custom-conf.WHATEVER`: any other filter configuration value that you might need for your Stripes extension are supported through the `stripes.custom-conf` sub-namespace, i.e., `stripes.custom-conf.WHATEVER=MY_CUSTOM_VALUE` will be set as an configuration parameter of Stripes filter with key `WHATEVER` and value `MY_CUSTOM_VALUE`.
 * `stripes.enabled`: set to false to bypass this module's configuration.
 
+By default, Stripes Dynamic Filter map to `/*`, whereas Stripes Filter maps to `*.jsp`. Beginning with 1.1.0, it is possible to overwrite this mappings by defining two beans, named `urlPatternsForStripesDynamicFilter` and / or `urlPatternsForStripesFilter`, both returning `List < String >` with the desired URL mappings.
+
+Also beginning with 1.1.0, it is possible to run Stripes Filters side by side with Spring MVC (f.ex., you want to use Actuator from Spring Boot 1.5). To do so, just add `stripes.without-springmvc=false` on your `application.properties` file.
+
 ## Running the sample
 
 * Git clone + `mvn clean install`
@@ -26,5 +30,15 @@ Although it is possible to start your Stripes application without having to set 
 
 ## Other caveats
 
-* This starter module manually deactivates Spring MVC, by defining String-type beans with ids `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME`, `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME` and `conventionErrorViewResolver`.
+* This starter module manually deactivates Spring MVC, by defining String-type beans with ids `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME`, `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME` and `conventionErrorViewResolver`. As of 1.1.0, this behaviour can be reverted by adding `stripes.without-springmvc=false` to your `application.properties` file.
 * If running several application instances, set the `stripes.encryption-key` property at build time to enforce the use of the same encryption key. Look at the sample (`stripes-spring-boot-sample/pom.xml`, `stripes-spring-boot-sample/src/main/resources/application.properties`) to see how to do this.
+
+## History
+
+* 1.1.0 
+  * Update to latest 1.5 Spring Boot release
+  * Allow to overwrite URL patterns for Stripes' filters
+  * Allow to run Stripes side by side with Spring MVC
+
+* 1.0.0
+  * First release
