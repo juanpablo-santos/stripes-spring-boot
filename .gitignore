@@ -7,3 +7,12 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+.classpath
+.idea
+.project
+.settings/
+.springBeans
+.factorypath
+.apt_generated/
+*.iml
+sonar-project.properties
