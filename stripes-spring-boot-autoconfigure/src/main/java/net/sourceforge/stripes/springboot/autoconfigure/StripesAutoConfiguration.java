@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.DispatcherType;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,15 +39,20 @@ public class StripesAutoConfiguration {
 
     private static final String BASE_PKG = ""; // would make sense to read another stripes.something property? whole classpath may be scanned twice
 
-    @Autowired
-    private StripesProperties properties;
+    private final StripesProperties properties;
+
+    public StripesAutoConfiguration( final StripesProperties properties ) {
+        this.properties = properties;
+    }
 
     @Bean( name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME )
+    @ConditionalOnProperty( name = "stripes.without-springmvc", matchIfMissing = true )
     public String disableSpringMvcDispatcherServletRegistration() {
         return "disableSpringMvcDispatcherServletRegistration";
     }
 
     @Bean( name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME )
+    @ConditionalOnProperty( name = "stripes.without-springmvc", matchIfMissing = true )
     public String disableSpringMvcDispatcherServlet() {
         return "disableSpringMvcDispatcherServlet";
     }
@@ -62,7 +67,7 @@ public class StripesAutoConfiguration {
      */
     @Bean( name = "stripesFilter" )
     @ConditionalOnMissingBean( name = "stripesFilter" )
-    public FilterRegistrationBean stripesFilter() {
+    public FilterRegistrationBean stripesFilter( @Qualifier( "urlPatternsForStripesFilter" ) final List< String > urlPatternsForStripesFilter ) {
         final StripesFilter filter = new StripesFilter();
 
         final Map< String, String > params = new HashMap< String, String >();
@@ -97,36 +102,42 @@ public class StripesAutoConfiguration {
             putIfNotEmpty( params, customConf.getKey(), customConf.getValue() );
         }
 
-        final List< String > urlPatterns = new ArrayList< String >();
-        urlPatterns.add( "*.jsp" );
-
         final FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter( filter );
         registration.setInitParameters( params );
-        registration.setUrlPatterns( urlPatterns );
+        registration.setUrlPatterns( urlPatternsForStripesFilter );
         registration.setDispatcherTypes( DispatcherType.REQUEST );
         registration.setOrder( Ordered.HIGHEST_PRECEDENCE + 2 );
         return registration;
     }
 
-    /**
-     *
-     * @return
-     */
     @Bean( name = "stripesDynamicFilter" )
     @ConditionalOnMissingBean( name = "stripesDynamicFilter" )
-    public FilterRegistrationBean stripesDynamicFilter() {
+    public FilterRegistrationBean stripesDynamicFilter( @Qualifier( "urlPatternsForStripesDynamicFilter" ) final List< String > urlPatternsForStripesDynamicFilter ) {
         final DynamicMappingFilter filter = new DynamicMappingFilter();
-
-        final List< String > urlPatterns = new ArrayList< String >();
-        urlPatterns.add( "/*" );
 
         final FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter( filter );
-        registration.setUrlPatterns( urlPatterns );
+        registration.setUrlPatterns( urlPatternsForStripesDynamicFilter );
         registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.INCLUDE, DispatcherType.FORWARD, DispatcherType.ERROR );
         registration.setOrder( Ordered.LOWEST_PRECEDENCE );
         return registration;
+    }
+
+    @Bean( "urlPatternsForStripesFilter" )
+    @ConditionalOnMissingBean( name = "urlPatternsForStripesFilter" )
+    public List< String > urlPatternsForStripesFilter() {
+        final List< String > urlPatterns = new ArrayList< String >();
+        urlPatterns.add( "*.jsp" );
+        return urlPatterns;
+    }
+
+    @Bean( "urlPatternsForStripesDynamicFilter" )
+    @ConditionalOnMissingBean( name = "urlPatternsForStripesDynamicFilter" )
+    public List< String > urlPatternsForStripesDynamicFilter() {
+        final List< String > urlPatterns = new ArrayList< String >();
+        urlPatterns.add( "/*" );
+        return urlPatterns;
     }
 
     String getActionResolverPackages() {
