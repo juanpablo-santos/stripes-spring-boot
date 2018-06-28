@@ -35,10 +35,14 @@ Also beginning with 1.1.0, it is possible to run Stripes Filters side by side wi
 
 ## History
 
-* 1.1.0 
+* 2.0.0 - not yet released
+  * [Support for Spring Boot 2](https://github.com/juanpablo-santos/stripes-spring-boot/issues/4)
+  * Stripes Actuator Endpoint detailing Stripes' filters configuration
+  
+* [1.1.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/1.1.0)
   * Update to latest 1.5 Spring Boot release
   * Allow to overwrite URL patterns for Stripes' filters
   * Allow to run Stripes side by side with Spring MVC
 
-* 1.0.0
+* [1.0.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/1.0.0)
   * First release
