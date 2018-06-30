@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +28,11 @@ import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.util.Log;
 
 
+/**
+ * Stripes AutoConfiguration class.
+ * 
+ * @author Juan Pablo Santos Rodríguez
+ */
 @Configuration
 @ConditionalOnClass( name="net.sourceforge.stripes.springboot.autoconfigure.SpringBootVFS" ) // @see http://stackoverflow.com/a/25790672
 @ConditionalOnProperty( name = "stripes.enabled", matchIfMissing = true )
@@ -45,33 +49,19 @@ public class StripesAutoConfiguration {
         this.properties = properties;
     }
 
-    @Bean( name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME )
-    @ConditionalOnProperty( name = "stripes.without-springmvc", matchIfMissing = true )
-    public String disableSpringMvcDispatcherServletRegistration() {
-        return "disableSpringMvcDispatcherServletRegistration";
+    @Bean( "stripesEndpoint" )
+    @ConditionalOnMissingBean( name = "stripesEndpoint" )
+    public StripesEndpoint stripesEndpoint( final FilterRegistrationBean< StripesFilter > stripesFilter ) {
+        return new StripesEndpoint( stripesFilter );
     }
 
-    @Bean( name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME )
-    @ConditionalOnProperty( name = "stripes.without-springmvc", matchIfMissing = true )
-    public String disableSpringMvcDispatcherServlet() {
-        return "disableSpringMvcDispatcherServlet";
-    }
-
-    @Bean( name = "conventionErrorViewResolver" )
-    public String disableConventionErrorViewResolver() {
-        return "disableConventionErrorViewResolver";
-    }
-
-    /**
-     * @return
-     */
     @Bean( name = "stripesFilter" )
     @ConditionalOnMissingBean( name = "stripesFilter" )
-    public FilterRegistrationBean stripesFilter( @Qualifier( "urlPatternsForStripesFilter" ) final List< String > urlPatternsForStripesFilter ) {
+    public FilterRegistrationBean< StripesFilter > stripesFilter( @Qualifier( "urlPatternsForStripesFilter" ) final List< String > urlPatternsForStripesFilter ) {
         final StripesFilter filter = new StripesFilter();
 
         final Map< String, String > params = new HashMap< String, String >();
-        defaultIfEmpty( params, "ActionResolver.Packages", properties.getActionResolverPackages(), getActionResolverPackages() );
+        setActionResolverPackages( params, "ActionResolver.Packages", properties.getActionResolverPackages() );
         putIfNotEmpty( params, "ActionBeanPropertyBinder.Class", properties.getActionBeanPropertyBinder() );
         putIfNotEmpty( params, "ActionBeanContext.Class", properties.getActionBeanContext() );
         putIfNotEmpty( params, "ActionBeanContextFactory.Class", properties.getActionBeanContextFactory() );
@@ -102,7 +92,7 @@ public class StripesAutoConfiguration {
             putIfNotEmpty( params, customConf.getKey(), customConf.getValue() );
         }
 
-        final FilterRegistrationBean registration = new FilterRegistrationBean();
+        final FilterRegistrationBean< StripesFilter > registration = new FilterRegistrationBean<>();
         registration.setFilter( filter );
         registration.setInitParameters( params );
         registration.setUrlPatterns( urlPatternsForStripesFilter );
@@ -113,10 +103,10 @@ public class StripesAutoConfiguration {
 
     @Bean( name = "stripesDynamicFilter" )
     @ConditionalOnMissingBean( name = "stripesDynamicFilter" )
-    public FilterRegistrationBean stripesDynamicFilter( @Qualifier( "urlPatternsForStripesDynamicFilter" ) final List< String > urlPatternsForStripesDynamicFilter ) {
+    public FilterRegistrationBean< DynamicMappingFilter > stripesDynamicFilter( @Qualifier( "urlPatternsForStripesDynamicFilter" ) final List< String > urlPatternsForStripesDynamicFilter ) {
         final DynamicMappingFilter filter = new DynamicMappingFilter();
 
-        final FilterRegistrationBean registration = new FilterRegistrationBean();
+        final FilterRegistrationBean< DynamicMappingFilter > registration = new FilterRegistrationBean<>();
         registration.setFilter( filter );
         registration.setUrlPatterns( urlPatternsForStripesDynamicFilter );
         registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.INCLUDE, DispatcherType.FORWARD, DispatcherType.ERROR );
@@ -139,14 +129,22 @@ public class StripesAutoConfiguration {
         urlPatterns.add( "/*" );
         return urlPatterns;
     }
+    
+    void setActionResolverPackages( final Map< String, String > params, final String key, final String value ) {
+        if( StringUtils.isEmpty( value ) ) {
+            putIfNotEmpty( params, key, locateActionResolverPackages() );
+        } else {
+            putIfNotEmpty( params, key, value );
+        }
+    }
 
-    String getActionResolverPackages() {
+    String locateActionResolverPackages() {
         final StripesClassesScanner< ActionBean > scanner = new StripesClassesScanner< ActionBean >();
         scanner.addIncludeFilter( new AssignableTypeFilter( ActionBean.class ) );
         final Collection< Class< ? extends ActionBean > > actionbeans = scanner.findComponentClasses( BASE_PKG );
         final String packages = scanner.toPackagesWithoutStripesClasses( actionbeans );
         Assert.state( !StringUtils.isEmpty( packages ),
-                      "Didn't find classes implementing ActionBean, check your application build and optionally your " +
+                      "Didn't find classes implementing ActionBean, check your application build and/or your " +
                       "stripes.action-resolver-packages property on application.properties" );
 
         LOG.info( "Detected ActionBeans on " + packages );
