@@ -12,7 +12,7 @@
   <artifactId>stripes-spring-boot-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
-  <version>1.1.0</version>
+  <version>2.0.0</version>
 
   <modules>
     <module>stripes-spring-boot-autoconfigure</module>
@@ -23,9 +23,24 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring-boot.version>1.5.14.RELEASE</spring-boot.version>
+    <spring-boot.version>2.0.3.RELEASE</spring-boot.version>
     <stripes.version>1.7.0-beta4</stripes.version>
   </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <dependencyManagement>
     <dependencies>
@@ -38,6 +53,18 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-configuration-processor</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
         <version>${spring-boot.version}</version>
       </dependency>
 
