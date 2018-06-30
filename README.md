@@ -19,30 +19,30 @@ Although it is possible to start your Stripes application without having to set 
 
 By default, Stripes Dynamic Filter map to `/*`, whereas Stripes Filter maps to `*.jsp`. Beginning with 1.1.0, it is possible to overwrite this mappings by defining two beans, named `urlPatternsForStripesDynamicFilter` and / or `urlPatternsForStripesFilter`, both returning `List < String >` with the desired URL mappings.
 
-Also beginning with 1.1.0, it is possible to run Stripes Filters side by side with Spring MVC (f.ex., you want to use Actuator from Spring Boot 1.5). To do so, just add `stripes.without-springmvc=false` on your `application.properties` file.
-
 ## Running the sample
 
 * Git clone + `mvn clean install`
 * `cd stripes-spring-boot-sample`
 * `mvn spring-boot:run` or `java -jar target/stripes-spring-boot-sample-1.0.0.jar`
-* Browse http://localhost:8080/index.jsp
+* Browse http://localhost:8080/index.jsp and/or http://localhost:8080/actuator/stripes
 
 ## Other caveats
 
-* This starter module manually deactivates Spring MVC, by defining String-type beans with ids `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME`, `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME` and `conventionErrorViewResolver`. As of 1.1.0, this behaviour can be reverted by adding `stripes.without-springmvc=false` to your `application.properties` file.
 * If running several application instances, set the `stripes.encryption-key` property at build time to enforce the use of the same encryption key. Look at the sample (`stripes-spring-boot-sample/pom.xml`, `stripes-spring-boot-sample/src/main/resources/application.properties`) to see how to do this.
+* On 1.x.y, this starter module manually deactivates Spring MVC, by defining String-type beans with ids `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME`, `DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_BEAN_NAME` and `conventionErrorViewResolver`. As of 1.1.0, this behaviour can be reverted by adding `stripes.without-springmvc=false` to your `application.properties` file.
 
 ## History
 
-* 2.0.0 - not yet released
+* [2.0.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.0.0)
   * [Support for Spring Boot 2](https://github.com/juanpablo-santos/stripes-spring-boot/issues/4)
-  * Stripes Actuator Endpoint detailing Stripes' filters configuration
+  * New Stripes Actuator Endpoint detailing Stripes' filters configuration
+  * Can run side by side with Spring MVC, no need to set any property on your `application.properties` file
+  * Faster startup time if `stripes.action-resolver-packages` is set on your `application.properties` file
   
 * [1.1.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/1.1.0)
   * Update to latest 1.5 Spring Boot release
   * Allow to overwrite URL patterns for Stripes' filters
-  * Allow to run Stripes side by side with Spring MVC
+  * Allow to run Stripes side by side with Spring MVC, add `stripes.without-springmvc=false` on your `application.properties` file
 
 * [1.0.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/1.0.0)
   * First release
