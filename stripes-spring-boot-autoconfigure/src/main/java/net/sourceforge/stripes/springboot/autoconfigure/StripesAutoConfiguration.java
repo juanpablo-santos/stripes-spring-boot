@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.controller.DynamicMappingFilter;
 import net.sourceforge.stripes.controller.StripesFilter;
+import net.sourceforge.stripes.exception.ExceptionHandler;
 import net.sourceforge.stripes.util.Log;
 
 
@@ -58,9 +59,7 @@ public class StripesAutoConfiguration {
     @Bean( name = "stripesFilter" )
     @ConditionalOnMissingBean( name = "stripesFilter" )
     public FilterRegistrationBean< StripesFilter > stripesFilter( @Qualifier( "urlPatternsForStripesFilter" ) final List< String > urlPatternsForStripesFilter ) {
-        final StripesFilter filter = new StripesFilter();
-
-        final Map< String, String > params = new HashMap< String, String >();
+        final Map< String, String > params = new HashMap<>();
         setActionResolverPackages( params, "ActionResolver.Packages", properties.getActionResolverPackages() );
         putIfNotEmpty( params, "ActionBeanPropertyBinder.Class", properties.getActionBeanPropertyBinder() );
         putIfNotEmpty( params, "ActionBeanContext.Class", properties.getActionBeanContext() );
@@ -93,7 +92,7 @@ public class StripesAutoConfiguration {
         }
 
         final FilterRegistrationBean< StripesFilter > registration = new FilterRegistrationBean<>();
-        registration.setFilter( filter );
+        registration.setFilter( new StripesFilter() );
         registration.setInitParameters( params );
         registration.setUrlPatterns( urlPatternsForStripesFilter );
         registration.setDispatcherTypes( DispatcherType.REQUEST );
@@ -104,10 +103,8 @@ public class StripesAutoConfiguration {
     @Bean( name = "stripesDynamicFilter" )
     @ConditionalOnMissingBean( name = "stripesDynamicFilter" )
     public FilterRegistrationBean< DynamicMappingFilter > stripesDynamicFilter( @Qualifier( "urlPatternsForStripesDynamicFilter" ) final List< String > urlPatternsForStripesDynamicFilter ) {
-        final DynamicMappingFilter filter = new DynamicMappingFilter();
-
         final FilterRegistrationBean< DynamicMappingFilter > registration = new FilterRegistrationBean<>();
-        registration.setFilter( filter );
+        registration.setFilter( new DynamicMappingFilter() );
         registration.setUrlPatterns( urlPatternsForStripesDynamicFilter );
         registration.setDispatcherTypes( DispatcherType.REQUEST, DispatcherType.INCLUDE, DispatcherType.FORWARD, DispatcherType.ERROR );
         registration.setOrder( Ordered.LOWEST_PRECEDENCE );
@@ -117,7 +114,7 @@ public class StripesAutoConfiguration {
     @Bean( "urlPatternsForStripesFilter" )
     @ConditionalOnMissingBean( name = "urlPatternsForStripesFilter" )
     public List< String > urlPatternsForStripesFilter() {
-        final List< String > urlPatterns = new ArrayList< String >();
+        final List< String > urlPatterns = new ArrayList<>();
         urlPatterns.add( "*.jsp" );
         return urlPatterns;
     }
@@ -125,7 +122,7 @@ public class StripesAutoConfiguration {
     @Bean( "urlPatternsForStripesDynamicFilter" )
     @ConditionalOnMissingBean( name = "urlPatternsForStripesDynamicFilter" )
     public List< String > urlPatternsForStripesDynamicFilter() {
-        final List< String > urlPatterns = new ArrayList< String >();
+        final List< String > urlPatterns = new ArrayList<>();
         urlPatterns.add( "/*" );
         return urlPatterns;
     }
@@ -139,7 +136,7 @@ public class StripesAutoConfiguration {
     }
 
     String locateActionResolverPackages() {
-        final StripesClassesScanner< ActionBean > scanner = new StripesClassesScanner< ActionBean >();
+        final StripesClassesScanner< ActionBean > scanner = new StripesClassesScanner<>();
         scanner.addIncludeFilter( new AssignableTypeFilter( ActionBean.class ) );
         final Collection< Class< ? extends ActionBean > > actionbeans = scanner.findComponentClasses( BASE_PKG );
         final String packages = scanner.toPackagesWithoutStripesClasses( actionbeans );
@@ -150,6 +147,29 @@ public class StripesAutoConfiguration {
         LOG.info( "Detected ActionBeans on " + packages );
 
         return packages;
+    }
+
+    void setExceptionHandler( final Map< String, String > params, final String key, final String value ) {
+        if( StringUtils.isEmpty( value ) ) {
+            putIfNotEmpty( params, key, locateExceptionHandler() );
+        } else {
+            putIfNotEmpty( params, key, value );
+        }
+    }
+
+    String locateExceptionHandler() {
+        final StripesClassesScanner< ExceptionHandler > scanner = new StripesClassesScanner<>();
+        scanner.addIncludeFilter( new AssignableTypeFilter( ExceptionHandler.class ) );
+        final Collection< Class< ? extends ExceptionHandler > > exceptionHandlers = scanner.findComponentClasses( BASE_PKG );
+        final String exceptionHandler = scanner.selectFirstConcreteConfigurationClass( exceptionHandlers );
+        if( !StringUtils.isEmpty( exceptionHandler ) ) {
+            LOG.warn( "Didn't found any ExceptionHandler, defaulting to net.sourceforge.stripes.exception.DefaultExceptionHandler;" +
+                      "check your application build and optionally your stripes.exception-handler property on application.properties" );
+            return null;
+        } else {
+            LOG.info( "Detected ExceptionHandlers on " + scanner.toPackagesWithoutStripesClasses( exceptionHandlers ) + " selected " + exceptionHandler );
+            return exceptionHandler;
+        }
     }
 
     void defaultIfEmpty( final Map< String, String > params, final String key, final String value, final String def ) {

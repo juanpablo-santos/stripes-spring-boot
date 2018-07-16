@@ -36,8 +36,9 @@ By default, Stripes Dynamic Filter map to `/*`, whereas Stripes Filter maps to `
 * [2.0.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.0.0)
   * [Support for Spring Boot 2](https://github.com/juanpablo-santos/stripes-spring-boot/issues/4)
   * New Stripes Actuator Endpoint detailing Stripes' filters configuration
+  * Exception Handler autodetection
   * Can run side by side with Spring MVC, no need to set any property on your `application.properties` file
-  * Faster startup time if `stripes.action-resolver-packages` is set on your `application.properties` file
+  * Faster startup time if `stripes.action-resolver-packages` and/or `stripes.exception-handler` are set on your `application.properties` file
   
 * [1.1.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/1.1.0)
   * Update to latest 1.5 Spring Boot release

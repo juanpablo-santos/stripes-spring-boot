@@ -1,6 +1,7 @@
 package net.sourceforge.stripes.springboot.autoconfigure;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -104,6 +105,15 @@ class StripesClassesScanner < T > extends ClassPathScanningCandidateComponentPro
         }
 
         return StringUtils.collectionToCommaDelimitedString( packages );
+    }
+
+    public String selectFirstConcreteConfigurationClass( final Collection< Class< ? extends T > > classes ) {
+        for( final Class< ? extends T > clase : classes ) {
+            if( !fromStripesLibrary( clase ) && !Modifier.isAbstract( clase.getModifiers() ) && !clase.isInterface() ) {
+                return clase.getName();
+            }
+        }
+        return null;
     }
 
     String toPackages( final Collection< Class< ? extends T > > classes ) {
