@@ -17,7 +17,40 @@ Although it is possible to start your Stripes application without having to set 
 * `stripes.custom-conf.WHATEVER`: any other filter configuration value that you might need for your Stripes extension are supported through the `stripes.custom-conf` sub-namespace, i.e., `stripes.custom-conf.WHATEVER=MY_CUSTOM_VALUE` will be set as an configuration parameter of Stripes filter with key `WHATEVER` and value `MY_CUSTOM_VALUE`.
 * `stripes.enabled`: set to false to bypass this module's configuration.
 
-By default, Stripes Dynamic Filter map to `/*`, whereas Stripes Filter maps to `*.jsp`. Beginning with 1.1.0, it is possible to overwrite this mappings by defining two beans, named `urlPatternsForStripesDynamicFilter` and / or `urlPatternsForStripesFilter`, both returning `List < String >` with the desired URL mappings.
+By default, Stripes Dynamic Filter maps to `/*`, whereas Stripes Filter maps to `*.jsp`. Beginning with 1.1.0, it is possible to overwrite this mappings by defining two beans, named `urlPatternsForStripesDynamicFilter` and / or `urlPatternsForStripesFilter`, both returning `List < String >` with the desired URL mappings.
+
+## File Uploads
+
+By default, Spring Boot servlet-based applications will detect the multipart upload and consume it through Spring MVC, so when the request arrives at the ActionBean, the FileBean will be `null`, as the associated stream has been already read. 
+
+In order to fix, this you have to ensure that the request will be consumed either only one of Spring and Stripes. The easiest way to do this is to add the `spring.servlet.multipart.enabled=false` to your `application.properties` file. If you need that Stripes and Spring MVC to coexist in your application, then you'd have to redefine Spring's `DispatcherServlet` so it doesn't serve `/*`. Something along the lines of
+
+```
+[...]
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.DispatcherServlet;
+[...]
+
+@Configuration
+public class MyApplicationConfiguration {
+
+    [...]
+    @Bean( name = DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME )
+    public DispatcherServletRegistrationBean dispatcherServletRegistrationBean( final DispatcherServlet dispatcherServlet ) {
+        DispatcherServletRegistrationBean dispatcherServletRegistrationBean= new DispatcherServletRegistrationBean( dispatcherServlet, "/spring-mvc" );
+        // dispatcherServletRegistrationBean.addUrlMappings( "/spring-mvc-alt-mapping-1", 
+        //                                                   "/spring-mvc-alt-mapping-2", 
+        //                                                   "/etc." );
+        return dispatcherServletRegistrationBean;
+    }
+    [...]
+
+}
+
+```
 
 ## Running the sample
 
