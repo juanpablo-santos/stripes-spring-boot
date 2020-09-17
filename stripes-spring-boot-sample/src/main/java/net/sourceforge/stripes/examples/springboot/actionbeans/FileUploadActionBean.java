@@ -1,12 +1,8 @@
 package net.sourceforge.stripes.examples.springboot.actionbeans;
 
-import net.sourceforge.stripes.action.ActionBean;
-import net.sourceforge.stripes.action.ActionBeanContext;
-import net.sourceforge.stripes.action.DefaultHandler;
-import net.sourceforge.stripes.action.FileBean;
-import net.sourceforge.stripes.action.ForwardResolution;
-import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.*;
 
+@UrlBinding("/stripes/sb/file-upload")
 public class FileUploadActionBean implements ActionBean {
 
     private ActionBeanContext context;
@@ -29,7 +25,6 @@ public class FileUploadActionBean implements ActionBean {
     }
 
     public void setAttachment( FileBean attachment ) {
-        System.out.println( "> " + attachment );
         this.attachment = attachment;
     }
 
@@ -43,7 +38,6 @@ public class FileUploadActionBean implements ActionBean {
 
     @DefaultHandler
     public Resolution fileUpload() {
-        System.out.println( "** " + attachment );
         fileName = attachment.getFileName();
         return new ForwardResolution( "/file-upload.jsp" );
     }
