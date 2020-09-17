@@ -66,6 +66,9 @@ public class MyApplicationConfiguration {
 
 ## History
 
+* [2.3.4](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.3.4)
+  * Support for Spring Boot 2.3.4
+
 * [2.0.0](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.0.0)
   * [Support for Spring Boot 2](https://github.com/juanpablo-santos/stripes-spring-boot/issues/4)
   * New Stripes Actuator Endpoint detailing Stripes' filters configuration
