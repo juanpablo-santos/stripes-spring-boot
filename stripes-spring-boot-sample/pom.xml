@@ -32,6 +32,29 @@
 
     <plugins>
       <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- Since Spring Boot needs that the web resources must be inside a jar to be able to serve them on a fat jar, we -->
+            <!-- move them inside a new jar that will be picked up by the spring boot maven plugin repackage. The alternative  -->
+            <!-- is to move the web resources to another maven module. As this is a sample, we stay on the easy side.          -->
+            <id>create-web-resources-archive</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>web-resources</classifier>
+              <classesDirectory>${project.basedir}/src/main/resources/</classesDirectory>
+              <includes>
+                <include>META-INF/resources/**/*</include>
+              </includes>
+              <outputDirectory>${project.build.directory}/classes/BOOT-INF/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
