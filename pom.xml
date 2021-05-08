@@ -12,7 +12,7 @@
   <artifactId>stripes-spring-boot-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
-  <version>2.3.4</version>
+  <version>2.3.10</version>
 
   <modules>
     <module>stripes-spring-boot-autoconfigure</module>
@@ -23,7 +23,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
+    <spring-boot.version>2.3.10.RELEASE</spring-boot.version>
     <stripes.version>1.7.0-beta4</stripes.version>
   </properties>
 
