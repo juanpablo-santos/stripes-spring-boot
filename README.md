@@ -66,6 +66,9 @@ public class MyApplicationConfiguration {
 
 ## History
 
+* [2.3.10](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.3.10)
+  * Support for Spring Boot 2.3.10
+
 * [2.3.4](https://github.com/juanpablo-santos/stripes-spring-boot/releases/tag/2.3.4)
   * Support for Spring Boot 2.3.4
 
