@@ -1,13 +1,13 @@
 package net.sourceforge.stripes.springboot.autoconfigure;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import net.sourceforge.stripes.controller.StripesFilter;
 
@@ -15,7 +15,7 @@ import net.sourceforge.stripes.controller.StripesFilter;
 /**
  * {@link StripesAutoConfiguration} associated unit tests.
  */
-@RunWith( SpringRunner.class )
+@ExtendWith( SpringExtension.class )
 @SpringBootTest( classes=StripesAutoConfiguration.class )
 public class StripesAutoConfigurationTest {
 
@@ -26,8 +26,8 @@ public class StripesAutoConfigurationTest {
 	/** Ensures {@link StripesAutoConfiguration} loads everything ok. */
 	@Test
 	public void shoudlCheckAutoConfiguration() {
-		Assert.assertNotNull( stripesFilter );
-		Assert.assertEquals( "net.sourceforge.stripes.examples.springboot.actionbeans", stripesFilter.getInitParameters().get( "ActionResolver.Packages" ) );
+		Assertions.assertNotNull( stripesFilter );
+		Assertions.assertEquals( "net.sourceforge.stripes.examples.springboot.actionbeans", stripesFilter.getInitParameters().get( "ActionResolver.Packages" ) );
 	}
 
 }
