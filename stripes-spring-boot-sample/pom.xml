@@ -6,13 +6,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.10.RELEASE</version>
+    <version>2.5.14</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <artifactId>stripes-spring-boot-sample</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <version>2.3.10</version>
+  <version>2.5.14</version>
 
   <properties>
     <build.timestamp>${maven.build.timestamp}</build.timestamp>
@@ -77,7 +77,7 @@
     <dependency>
       <groupId>net.sourceforge.stripes</groupId>
       <artifactId>stripes-spring-boot-starter</artifactId>
-      <version>2.3.10</version>
+      <version>2.5.14</version>
     </dependency>
 
     <dependency>
